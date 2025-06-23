@@ -5,11 +5,9 @@ import './main.css'
 import Header from './Header.tsx'
 import Container from './Container.tsx'
 
-
-
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Header/>
     <Container/>
-  </StrictMode>
+  </StrictMode>,
 )
