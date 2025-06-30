@@ -17,9 +17,16 @@ function Container() {
   useEffect(()=>{
       const fetchData = async ()=>{
         try{
-          const resposta = await fetch("http://localhost:8000/produtos")
+          const resposta = await fetch("http://localhost:8001/produtos")
+          if(resposta.status==200){
           const result = await resposta.json()
           setProdutos(result)
+          }
+
+         if(resposta.status==400){
+            const result = await resposta.json()
+            setErroMensagem(result.mensagem)
+         }
         }catch(erro:any){
             setErroMensagem("Erro ao Realizar o fetch no backend")
         }
@@ -29,7 +36,7 @@ function Container() {
   //Quando a lista de dependências estiver vazia.
   //Significará que será executado quando carregar a página.
 
-  function trataForm(event: React.FormEvent<HTMLFormElement>) {
+  async function trataForm(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const produtoNovo:ProdutosState = {
       id:parseInt(id),
@@ -37,7 +44,26 @@ function Container() {
       preco:parseFloat(preco),
       categoria
     }
-    setProdutos([...produtos,produtoNovo])
+    try{
+          const resposta = await fetch("http://localhost:8001/produtos",{
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json"
+              },
+              body: JSON.stringify(produtoNovo)
+          })
+          if(resposta.status==200){
+          const result = await resposta.json()
+          setProdutos([...produtos, result])
+          }
+
+         if(resposta.status==400){
+            const result = await resposta.json()
+            setErroMensagem(result.mensagem)
+         }
+        }catch(erro:any){
+            setErroMensagem("Erro ao Realizar o fetch no backend")
+        }
 
   }
   function trataId(event:React.ChangeEvent<HTMLInputElement>){
